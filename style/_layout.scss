@@ -1,0 +1,76 @@
+.header{
+    background-color: $primaryDark;
+    padding-top: 32px;
+    padding-bottom: 32px;
+    font-size: 2em;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    border-radius: 12px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.addNewProduct{
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: 24px;
+}
+
+.table{
+    text-align: center;
+    line-height: 36px;
+}
+
+.isForSaleSwitch{
+    label{
+        cursor: pointer;
+    }
+    .custom-control-label::before{
+        top: 8px;
+    }
+    .custom-control-label::after{
+        top: calc(0.25rem + 6px)
+    }
+}
+
+.modal{
+    form{
+        display: flex;
+        .addNewProductModal__photo,.editProductModal__photo{
+            width: 30%;
+            flex-shrink: 0;
+            margin-right: 16px;
+            img{
+                object-fit: cover;
+                width: 100%;
+                margin-top: 16px;
+            }
+        }
+        .addNewProductModal__main,.editProductModal__main{
+            display: flex;
+            flex-wrap: wrap;
+            .sp100{
+                width: 100%;
+            }
+            .sp50{
+                width: 48%;
+                &:nth-of-type(2n){
+                    margin-right: 16px;
+                }
+            }
+        }
+    }
+}
+
+.addNewProductModal{
+    .modal-header,.modal-footer{
+        background-color: $primaryLight;
+    }
+}
+
+.editProductModal{
+    .modal-header,.modal-footer{
+        background-color: $secondaryLight;
+    }
+}

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JS week 3</title>
+    <!-- icon cdn-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="stylesheet" href="./style/all.css">
+</head>
+<div id="app">
+    <div class="container">
+        <header class="header">Product List</header>
+        <div class="addNewProduct">
+            <a href="#" class="addNewProduct__btn btn btn-primary" data-toggle="modal" data-target="#addNewProduct">Add
+                New
+                Product</a>
+        </div>
+        <table class="productList table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Category</th>
+                    <th>Product</th>
+                    <th>Original Price</th>
+                    <th>Price</th>
+                    <th>For Sale</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="product in products" :key="product.id">
+                    <td>{{product.category}}</td>
+                    <td>{{product.name}}</td>
+                    <td>{{product.original_price}}</td>
+                    <td>{{product.price}}</td>
+                    <td>
+                        <div class="isForSaleSwitch custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" :id="product.id+'isForSale'"
+                                v-model="product.is_forSale">
+                            <label class="custom-control-label"
+                                :for="product.id+'isForSale'">{{product.is_forSale? 'On':'Off'}}</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="functionBtns">
+                            <a href="#" class="functionBtns__edit btn btn-secondary material-icons" data-toggle="modal"
+                                data-target="#editProduct" @click='openEditModal(product.id)'>edit</a>
+                            <a href="#" class="functionBtns__delete btn btn-danger material-icons"
+                                @click="deleteProduct(product.id)">delete</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- add new prodcut modal -->
+    <div class="addNewProductModal">
+        <div class="modal fade" id="addNewProduct" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add New Product</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" class="material-icons">close</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="addNewProductModal__photo form-group">
+                                <label for="addNewProduct__img">Product Photo Url</label>
+                                <input type="url" v-model="tempProduct.imgUrl" class="form-control"
+                                    id="addNewProduct__img" aria-describedby="emailHelp">
+                                <img :src="tempProduct.imgUrl">
+                            </div>
+                            <div class="addNewProductModal__main">
+                                <div class="addNewProductModal__name sp100 form-group">
+                                    <label for="addNewProduct__name">Product Name</label>
+                                    <input type="text" v-model="tempProduct.name" class="form-control"
+                                        id="addNewProduct__name">
+                                </div>
+                                <div class="addNewProductModal__category sp50 form-group">
+                                    <label for="addNewProduct__category">Category</label>
+                                    <input type="text" v-model="tempProduct.category" class="form-control"
+                                        id="addNewProduct__category">
+                                </div>
+                                <div class="addNewProductModal__unit sp50 form-group">
+                                    <label for="addNewProduct__unit">Unit</label>
+                                    <input type="text" v-model="tempProduct.unit" class="form-control"
+                                        id="addNewProduct__unit">
+                                </div>
+                                <div class="addNewProductModal__priceOri sp50 form-group">
+                                    <label for="addNewProduct__priceOri">Original Price</label>
+                                    <input type="number" v-model="tempProduct.original_price" class="form-control"
+                                        id="addNewProduct__priceOri">
+                                </div>
+                                <div class="addNewProductModal__priceNow sp50 form-group">
+                                    <label for="addNewProduct__priceNow">Price</label>
+                                    <input type="number" v-model="tempProduct.price" class="form-control"
+                                        id="addNewProduct__priceNow">
+                                </div>
+                                <hr>
+                                <div class="addNewProductModal__description sp100 form-group">
+                                    <label for="addNewProduct__description">Description</label>
+                                    <textarea v-model="tempProduct.description" class="form-control"
+                                        id="addNewProduct__description" rows="3"
+                                        placeholder="product description..."></textarea>
+                                </div>
+                                <div class="addNewProductModal__content sp100 form-group">
+                                    <label for="addNewProduct__content">Content</label>
+                                    <textarea v-model="tempProduct.content" class="form-control"
+                                        id="addNewProduct__content" rows="3"
+                                        placeholder="product content..."></textarea>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button @click='addNewProduct' type="button" class="btn btn-primary">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- edit prodcut modal -->
+    <div class="editProductModal">
+        <div class="modal fade" id="editProduct" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Product</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" class="material-icons">close</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="editProductModal__photo form-group">
+                                <label for="editProduct__img">Product Photo Url</label>
+                                <input type="url" class="form-control" id="editProduct__img"
+                                    aria-describedby="emailHelp" v-model="tempProduct.imgUrl">
+                                <img :src="tempProduct.imgUrl" alt="#">
+                            </div>
+                            <div class="editProductModal__main">
+                                <div class="editProductModal__name sp100 form-group">
+                                    <label for="editProduct__name">Product Name</label>
+                                    <input type="text" class="form-control" id="editProduct__name"
+                                        v-model="tempProduct.name">
+                                </div>
+                                <div class="editProductModal__category sp50 form-group">
+                                    <label for="editProduct__category">Category</label>
+                                    <input type="text" class="form-control" id="editProduct__category"
+                                        v-model="tempProduct.category">
+                                </div>
+                                <div class="editProductModal__unit sp50 form-group">
+                                    <label for="editProduct__unit">Unit</label>
+                                    <input type="text" class="form-control" id="editProduct__unit"
+                                        v-model="tempProduct.unit">
+                                </div>
+                                <div class="editProductModal__priceOri sp50 form-group">
+                                    <label for="editProduct__priceOri">Original Price</label>
+                                    <input type="number" class="form-control" id="editProduct__priceOri"
+                                        v-model="tempProduct.original_price">
+                                </div>
+                                <div class="editProductModal__priceNow sp50 form-group">
+                                    <label for="editProduct__priceNow">Price</label>
+                                    <input type="number" class="form-control" id="editProduct__priceNow"
+                                        v-model="tempProduct.price">
+                                </div>
+                                <hr>
+                                <div class="editProductModal__description sp100 form-group">
+                                    <label for="editProduct__description">Description</label>
+                                    <textarea class="form-control" id="editProduct__description" rows="3"
+                                        placeholder="product description..."
+                                        v-model="tempProduct.description"></textarea>
+                                </div>
+                                <div class="editProductModal__content sp100 form-group">
+                                    <label for="editProduct__content">Content</label>
+                                    <textarea class="form-control" id="editProduct__content" rows="3"
+                                        placeholder="product content..." v-model="tempProduct.content"></textarea>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button @click="editProduct" type="button" class="btn btn-primary">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<body>
+    <!-- BS4 -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+    <!-- Vue cdn -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+    <script src="./js/all.js"></script>
+</body>
+
+</html>
